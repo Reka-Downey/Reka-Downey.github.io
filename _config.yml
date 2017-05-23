@@ -1,0 +1,46 @@
+# Site settings
+title: Reka's Blog
+email: rekadowney@gmail.com
+description: > # this means to ignore newlines until "baseurl:"
+  Reka's Blog
+baseurl: "" # the subpath of your site, e.g. /blog/
+# url: http://domain.suffix # the base hostname & protocol for your site
+# rss_url: /pages/feed.xml
+language: zh-CN #语言
+timezone:  Asia/Shanghai #时区
+
+author: Reka Downey
+
+# Sidebar filter
+# Choose 'tag' or 'category' as filter in sidebar.
+# 左侧菜单栏分类依据：tag（标签）或者 category（类别）
+filter: 'tag'
+recent_num: 20
+
+# Social account
+twitter: RekaDowney
+github: Reka-Downey
+instagram: rekadowney
+
+# avatar and Favicon 头像、网站图片配置
+avatar: https://ooo.0o0.ooo/2017/05/22/5922c29806f81.jpg
+favicon: https://ooo.0o0.ooo/2017/05/22/5922c0a8f1d55.jpg
+
+# disqus config 评论配置
+disqus:
+  shortname: rekadowney
+
+# Build settings
+permalink: /:year/:month/:day/:title.html
+markdown: kramdown
+# highlighter: pygments
+highlighter: rouge
+mathjax: disabled
+sass:
+  style: compressed
+
+# Jekyll Plugin
+# https://help.github.com/articles/adding-jekyll-plugins-to-a-github-pages-site/
+gems:
+  - jekyll-feed
+
