@@ -1,0 +1,942 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Nexus,Maven," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="说明　　本文主要介绍如何在Windows10_64bit环境下安装Sonatype的Nexus OSS 3.0.1-01。  　　安装须知：JDK必须确保在Java8及以上，不支持OpenJDK；Maven版本建议不低于3.3.3。 　　官方文档上的配置">
+<meta name="keywords" content="Nexus,Maven">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows10 下安装 Nexus OSS 3.xx">
+<meta property="og:url" content="https://reka-downey.github.io/2017/05/23/windows10-install-nexus3/index.html">
+<meta property="og:site_name" content="钟俊滨的博客">
+<meta property="og:description" content="说明　　本文主要介绍如何在Windows10_64bit环境下安装Sonatype的Nexus OSS 3.0.1-01。  　　安装须知：JDK必须确保在Java8及以上，不支持OpenJDK；Maven版本建议不低于3.3.3。 　　官方文档上的配置">
+<meta property="og:image" content="https://ooo.0o0.ooo/2016/09/10/57d37d091c01e.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2016/09/10/57d37d0907f3e.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2016/09/10/57d37eab8ebc6.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2016/09/10/57d37d0914dc2.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2016/09/10/57d37d0915fe6.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2016/09/11/57d4b51ee8784.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2016/09/10/57d37d091c5fd.jpg">
+<meta property="og:updated_time" content="2017-05-27T07:35:04.879Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Windows10 下安装 Nexus OSS 3.xx">
+<meta name="twitter:description" content="说明　　本文主要介绍如何在Windows10_64bit环境下安装Sonatype的Nexus OSS 3.0.1-01。  　　安装须知：JDK必须确保在Java8及以上，不支持OpenJDK；Maven版本建议不低于3.3.3。 　　官方文档上的配置">
+<meta name="twitter:image" content="https://ooo.0o0.ooo/2016/09/10/57d37d091c01e.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: 'C7LG6Y7FNB',
+      apiKey: '2c688ba6e72c3b75a0aa9491812aede5',
+      indexName: 'HexoBlog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"博文搜索","hits_empty":"未发现与 「${query}」相关的内容","hits_stats":"${hits} 篇相关博文，耗时 ${time} 毫秒"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://reka-downey.github.io/2017/05/23/windows10-install-nexus3/"/>
+
+
+
+
+
+  <title>Windows10 下安装 Nexus OSS 3.xx | 钟俊滨的博客</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?1571b1df44326695605072b645794467";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">钟俊滨的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一个正在努力奋斗的程序猿</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://reka-downey.github.io/2017/05/23/windows10-install-nexus3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="钟俊滨">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://ooo.0o0.ooo/2017/05/22/5922c29806f81.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="钟俊滨的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Windows10 下安装 Nexus OSS 3.xx</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-23T16:20:29+08:00">
+                2017-05-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Nexus/" itemprop="url" rel="index">
+                    <span itemprop="name">Nexus</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/05/23/windows10-install-nexus3/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/05/23/windows10-install-nexus3/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>　　本文主要介绍如何在<code>Windows10_64bit</code>环境下安装<code>Sonatype</code>的<code>Nexus OSS 3.0.1-01</code>。 </p>
+<p>　　安装须知：<code>JDK</code>必须确保在<code>Java8</code>及以上，不支持<code>OpenJDK</code>；<code>Maven</code>版本建议不低于<code>3.3.3</code>。</p>
+<p>　　<strong>官方文档上的配置</strong></p>
+<p><img src="https://ooo.0o0.ooo/2016/09/10/57d37d091c01e.jpg" alt="安装须知.jpg"></p>
+<a id="more"></a>
+<hr>
+<h2 id="下载"><a href="#下载" class="headerlink" title="下载"></a>下载</h2><p>　　从<a href="https://www.sonatype.com/download-oss-sonatype" target="_blank" rel="external">官网</a>上下载<code>Nexus</code>的最新版本，这里选择<code>nexus-3.0.1-01-win64.zip</code>压缩版本。</p>
+<p><img src="https://ooo.0o0.ooo/2016/09/10/57d37d0907f3e.jpg" alt="下载.jpg"></p>
+<hr>
+<h2 id="解压"><a href="#解压" class="headerlink" title="解压"></a>解压</h2><p>　　解压缩该<code>zip</code>包，建议<code>Nexus</code>的存储路径不使用中文（为方便后文描述，规定<strong>%NEXUS_HOME%</strong>作为<code>Nexus</code>的存储路径）。</p>
+<hr>
+<h2 id="基本配置"><a href="#基本配置" class="headerlink" title="基本配置"></a>基本配置</h2><p>　　主要配置<code>Nexus</code>的端口与<code>Nexus</code>的上下文路径。打开<code>%NEXUS_HOME%/etc/org.sonatype.nexus.cfg</code>文件，可以看到如下的默认配置：<br><img src="https://ooo.0o0.ooo/2016/09/10/57d37eab8ebc6.jpg" alt="默认配置.jpg"><br>　　其中<code>application-host</code>代表<code>Nexus</code>服务监听的主机，<code>application-port</code>代表<code>Nexus</code>服务监听的端口，<code>nexus-context-path</code>代表<code>Nexus</code>服务的上下文。通常可以不做任何修改，但个人习惯于修改<code>application-host</code>为<code>127.0.0.1</code>（关于<code>0.0.0.0</code>与<code>127.0.0.1</code>的区别自行检索），修改<code>nexus-context-path</code>为<code>/nexus</code>。（这些修改都是个人口味，即使你不做修改也是没问题的）</p>
+<p><img src="https://ooo.0o0.ooo/2016/09/10/57d37d0914dc2.jpg" alt="端口上下文配置.jpg"></p>
+<hr>
+<h2 id="运行环境配置"><a href="#运行环境配置" class="headerlink" title="运行环境配置"></a>运行环境配置</h2><p>　　可以在<code>%NEXUS_HOME%/bin/nexus.vmoptions</code>中配置运行时的最大堆、最小堆，根据个人的电脑以及需要可以自行修改，默认配置如下：<br><img src="https://ooo.0o0.ooo/2016/09/10/57d37d0915fe6.jpg" alt="默认运行环境配置.jpg"></p>
+<hr>
+<h2 id="运行并安装Nexus的Windows服务"><a href="#运行并安装Nexus的Windows服务" class="headerlink" title="运行并安装Nexus的Windows服务"></a>运行并安装Nexus的Windows服务</h2><p>　　在<code>%NEXUS_HOME%/bin/</code>目录下，以管理员身份运行<code>CMD</code>，键入<code>nexus.exe /run</code>命令可以启动<code>Nexus</code>（没试过，官网上是这样写的），但是通常不建议这么做，更好的方式是作为一个系统服务来启动。<code>Windows</code>下安装<code>Nexus</code>服务更是简单：还是在<code>%NEXUS_HOME%/bin/</code>目录，直接以管理员身份运行<code>CMD</code>并键入<code>nexus.exe /install</code>可以安装<code>Nexus</code>服务，相应地：<code>nexus.exe /uninstall</code>可以卸载服务。 </p>
+<p>　　服务安装完毕之后，可以在<code>控制面板/所有控制面板项/管理工具/计算机管理</code>或者右键<code>我的电脑</code> –&gt; <code>管理</code>中找到<code>服务和应用程序/服务</code>，接着将我们安装的<code>Nexus</code>服务<code>启动类型</code>修改为<code>手动</code>。</p>
+<p><img src="https://ooo.0o0.ooo/2016/09/11/57d4b51ee8784.jpg" alt="Nexus服务启动类型.jpg"></p>
+<p>　　有三种方式启动<code>Nexus</code>： </p>
+<p><span class="blue">第一种： </span></p>
+<p>　　在<code>%NEXUS_HOME%/bin/</code>目录下，以管理员身份运行<code>CMD</code>，键入<code>nexus.exe /start</code>命令启动服务，对应的<code>nexus.exe /stop</code>命令关闭当前开启的<code>Nexus</code>服务；【可以将<code>%NEXUS_HOME%/bin/</code>添加到系统变量<code>Path</code>中，这样有什么作用你应该懂得】 </p>
+<p><span class="blue">第二种： </span></p>
+<p>　　在任意目录下，直接以管理员身份运行<code>CMD</code>，键入<code>net start nexus</code>命令可以启动服务，对应的<code>net stop nexus</code>可以关闭服务。<del>（配置并使用过<code>MySQL</code>或者<code>MongoDB</code>等<code>Windows</code>服务的人基本都知道这两条命令）</del> </p>
+<p><span class="blue">第三种： </span></p>
+<p>　　在<code>控制面板/所有控制面板项/管理工具/计算机管理</code>或者右键<code>我的电脑</code> –&gt; <code>管理</code>中找到<code>服务和应用程序/服务</code>选项，在右侧的服务列表中找到<code>nexus服务</code>，接着可以选择<code>启动</code>、<code>停止</code>、<code>重启动</code>该服务。</p>
+<p>　　当然，如果你把<code>nexus服务</code>的启动类型设置为<code>自动</code>的话，那么则不必再手动启动了。</p>
+<hr>
+<h2 id="访问"><a href="#访问" class="headerlink" title="访问"></a>访问</h2><p>　　服务启动之后，在浏览器中键入<code>localhost:8081/nexus/</code>（如果没有修改过默认配置的话则访问<code>localhost:8081/</code>）即可进入<code>Nexus</code>的欢迎页，点击右上角的<code>Sign in</code>按钮并输入默认用户<code>admin</code>以及默认密码<code>admin123</code>便可以管理配置<code>Nexus</code>私服了。</p>
+<p><img src="https://ooo.0o0.ooo/2016/09/10/57d37d091c5fd.jpg" alt="欢迎页.jpg"></p>
+<hr>
+<p>　　本文并没有讲到<code>Nexus</code>的第二个基础：</p>
+<ul>
+<li><p>如何配置<code>Nexus</code>的宿主/代理仓库以及仓库组；</p>
+</li>
+<li><p>如何在项目中使用<code>Nexus</code>；</p>
+</li>
+<li><p>如何通过<code>Maven</code>配置<code>Nexus</code>；</p>
+</li>
+<li><p>如何在<code>Nexus</code>中检索依赖。</p>
+<p>  这部分请自己参考<a href="http://books.sonatype.com/nexus-book/3.0/reference/index.html" target="_blank" rel="external">官方文档</a>或者等以后我再写一篇介绍。</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:right"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">编写日期：2016-09-10</td>
+</tr>
+<tr>
+<td style="text-align:right">发布日期：2017-05-23</td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div></div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="https://ooo.0o0.ooo/2017/05/26/59281c5c06940.png" alt="钟俊滨 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="https://ooo.0o0.ooo/2017/05/26/59281c5c1b0b4.jpg" alt="钟俊滨 Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Nexus/" rel="tag"># Nexus</a>
+          
+            <a href="/tags/Maven/" rel="tag"># Maven</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/23/shell-script-calculate/" rel="next" title="Linux Shell 脚本（2）——算术运算">
+                <i class="fa fa-chevron-left"></i> Linux Shell 脚本（2）——算术运算
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/27/paging-encapsulation/" rel="prev" title="通用分页封装模型">
+                通用分页封装模型 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://ooo.0o0.ooo/2017/05/22/5922c29806f81.jpg"
+               alt="钟俊滨" />
+          <p class="site-author-name" itemprop="name">钟俊滨</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Reka-Downey" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/RekaDowney" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.instagram.com/rekadowney/" target="_blank" title="Instagram">
+                  
+                    <i class="fa fa-fw fa-instagram"></i>
+                  
+                  Instagram
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#下载"><span class="nav-number">2.</span> <span class="nav-text">下载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解压"><span class="nav-number">3.</span> <span class="nav-text">解压</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本配置"><span class="nav-number">4.</span> <span class="nav-text">基本配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运行环境配置"><span class="nav-number">5.</span> <span class="nav-text">运行环境配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运行并安装Nexus的Windows服务"><span class="nav-number">6.</span> <span class="nav-text">运行并安装Nexus的Windows服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#访问"><span class="nav-number">7.</span> <span class="nav-text">访问</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">钟俊滨</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://reka_downey.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://reka-downey.github.io/2017/05/23/windows10-install-nexus3/';
+          this.page.identifier = '2017/05/23/windows10-install-nexus3/';
+          this.page.title = 'Windows10 下安装 Nexus OSS 3.xx';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://reka_downey.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.1"></script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

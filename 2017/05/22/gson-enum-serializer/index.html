@@ -1,0 +1,952 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,Gson,Enum," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="版本说明　　JDK版本  　　Gson版本 12345&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;com.google.code.gson&amp;lt;/groupId&amp;gt;    &amp;lt;artifactId&amp;gt;gson&amp;lt;/artifactId&amp;gt;    &amp;lt;version&amp;gt;2.7&amp;lt;/version&amp;gt;&amp;lt;/dependency&amp;g">
+<meta name="keywords" content="Java,Gson,Enum">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gson 优雅实现多个枚举的自定义（反）序列化过程">
+<meta property="og:url" content="https://reka-downey.github.io/2017/05/22/gson-enum-serializer/index.html">
+<meta property="og:site_name" content="钟俊滨的博客">
+<meta property="og:description" content="版本说明　　JDK版本  　　Gson版本 12345&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;com.google.code.gson&amp;lt;/groupId&amp;gt;    &amp;lt;artifactId&amp;gt;gson&amp;lt;/artifactId&amp;gt;    &amp;lt;version&amp;gt;2.7&amp;lt;/version&amp;gt;&amp;lt;/dependency&amp;g">
+<meta property="og:image" content="https://ooo.0o0.ooo/2016/08/23/57bc4f3e6ee15.jpg">
+<meta property="og:image" content="https://ooo.0o0.ooo/2016/08/23/57bc3b38b0830.jpg">
+<meta property="og:updated_time" content="2017-05-27T05:39:31.650Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Gson 优雅实现多个枚举的自定义（反）序列化过程">
+<meta name="twitter:description" content="版本说明　　JDK版本  　　Gson版本 12345&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;com.google.code.gson&amp;lt;/groupId&amp;gt;    &amp;lt;artifactId&amp;gt;gson&amp;lt;/artifactId&amp;gt;    &amp;lt;version&amp;gt;2.7&amp;lt;/version&amp;gt;&amp;lt;/dependency&amp;g">
+<meta name="twitter:image" content="https://ooo.0o0.ooo/2016/08/23/57bc4f3e6ee15.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: 'C7LG6Y7FNB',
+      apiKey: '2c688ba6e72c3b75a0aa9491812aede5',
+      indexName: 'HexoBlog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"博文搜索","hits_empty":"未发现与 「${query}」相关的内容","hits_stats":"${hits} 篇相关博文，耗时 ${time} 毫秒"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://reka-downey.github.io/2017/05/22/gson-enum-serializer/"/>
+
+
+
+
+
+  <title>Gson 优雅实现多个枚举的自定义（反）序列化过程 | 钟俊滨的博客</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?1571b1df44326695605072b645794467";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">钟俊滨的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一个正在努力奋斗的程序猿</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://reka-downey.github.io/2017/05/22/gson-enum-serializer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="钟俊滨">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://ooo.0o0.ooo/2017/05/22/5922c29806f81.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="钟俊滨的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Gson 优雅实现多个枚举的自定义（反）序列化过程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-22T11:20:29+08:00">
+                2017-05-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/Gson/" itemprop="url" rel="index">
+                    <span itemprop="name">Gson</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/05/22/gson-enum-serializer/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/05/22/gson-enum-serializer/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="版本说明"><a href="#版本说明" class="headerlink" title="版本说明"></a>版本说明</h2><p>　　<code>JDK</code>版本</p>
+<p><img src="https://ooo.0o0.ooo/2016/08/23/57bc4f3e6ee15.jpg" alt="JDK版本说明"></p>
+<p>　　<code>Gson</code>版本</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.google.code.gson<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>gson<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.7<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="Gson-（反）序列化例子"><a href="#Gson-（反）序列化例子" class="headerlink" title="Gson （反）序列化例子"></a>Gson （反）序列化例子</h2><p>　　<code>Gson</code>是实现对象序列化和反序列化的利器，但是<code>Gson</code>在（反）序列化枚举时默认是根据枚举值的名称来实现的，如果你想要在（反）序列化枚举时输出自己定义的枚举属性，那么此时至少有两种选择：</p>
+<ul>
+<li>继承<code>TypeAdapter</code>抽象类并实现其中的抽象方法</li>
+<li>实现<code>JsonSerializer</code> 和/或<code>JsonDeserializer</code> 接口</li>
+</ul>
+<p>　　我通常是选择第二种方式，即实现接口的方式来自定义（反）序列化过程。比如下面这个实例：</p>
+<p>　　针对<code>JDK1.8</code>新的时间<code>API</code>中的<code>LocalDate</code>进行自定义（反）序列化过程：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> com.google.gson.*;</div><div class="line"><span class="keyword">import</span> java.lang.reflect.Type;</div><div class="line"><span class="keyword">import</span> java.time.LocalDate;</div><div class="line"><span class="keyword">import</span> java.time.format.DateTimeFormatter;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalDateTypeAdapter</span> <span class="keyword">implements</span> <span class="title">JsonSerializer</span>&lt;<span class="title">LocalDate</span>&gt;, <span class="title">JsonDeserializer</span>&lt;<span class="title">LocalDate</span>&gt; </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> DateTimeFormatter formatter = DateTimeFormatter.ofPattern(<span class="string">"yyyy-MM-dd"</span>);</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> JsonElement <span class="title">serialize</span><span class="params">(LocalDate src, Type typeOfSrc, JsonSerializationContext context)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span> == src ? <span class="keyword">null</span> : <span class="keyword">new</span> JsonPrimitive(formatter.format(src));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> LocalDate <span class="title">deserialize</span><span class="params">(JsonElement json, Type typeOfT, JsonDeserializationContext context)</span> <span class="keyword">throws</span> JsonParseException </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span> == json ? <span class="keyword">null</span> : LocalDate.parse(json.getAsString(), formatter);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>　　当注册了该<code>TypeAdapter</code>的<code>Gson</code>在序列化<code>LocalDate</code>类型时，会调用其中的<code>serialize</code>方法，此时如果<code>LocalDate</code>实例非空的话，我们将调用<code>formatter.format(src)</code>方法将<code>LocalDate</code>实例格式化成指定形式的字符串，然后封装成<code>JsonPrimitive</code>实例并返回<code>Gson</code>，<code>Gson</code>再将返回的<code>JsonPrimitive</code>写入到 json 字符串中。</p>
+<p>　　同理，当<code>Gson</code>反序列化时遇到<code>LocalDate</code>类型时，会调用其中的<code>deserialize</code>方法完成反序列化。</p>
+<h2 id="枚举（反）序列化通用实现"><a href="#枚举（反）序列化通用实现" class="headerlink" title="枚举（反）序列化通用实现"></a>枚举（反）序列化通用实现</h2><p>　　好了，扯完基本（反）序列化实现后，现在有一个问题：那就是针对单个枚举使用这种方式那是无可厚非的。但是当你的项目中应用到的枚举数量比较多的时候，如果依然采用这种方式，那么随着而来的问题是类的增加以及出现一些小范围的重复代码。</p>
+<p>　　要如何解决这个问题就是写作本文的意图了。</p>
+<p>　　本文是基于<code>JsonSerializer</code> 和<code>JsonDeserializer</code> 接口来解决问题的，当然网上有针对<code>TypeAdapter</code>的工厂类<code>TypeAdapterFactory</code>来解决该问题，但是该解决方案有个不足之处，那就是需要修改<code>Gson</code>的源码，这里就不讲该方案了，有需要的同学自行搜索。 </p>
+<p>　　第一步：一个接口，该接口定义了<code>Gson</code>在（反）序列化枚举时将调用的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">GsonEnum</span>&lt;<span class="title">E</span>&gt; </span>&#123;</div><div class="line"></div><div class="line">    <span class="function">String <span class="title">serialize</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function">E <span class="title">deserialize</span><span class="params">(String jsonEnum)</span></span>;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>　　接口中定义接收一个泛型<code>E</code>，该泛型用来表示枚举类型，里面有两个抽象方法，<code>String serialize()</code>方法表示将枚举序列化成字符串，<code>E deserialize(String jsonEnum)</code>表示将字符串反序列化成枚举并返回特定的枚举<code>E</code>。</p>
+<p>　　第二步：定义枚举类并实现第一步中声明的接口，这里为了演示效果，定义了如下两个枚举：</p>
+<p>　　派别枚举<code>Faction</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">enum</span> Faction implements GsonEnum&lt;Faction&gt; &#123;</div><div class="line"></div><div class="line">    ABNEGATION(<span class="string">"无私派"</span>), AMITY(<span class="string">"和平派"</span>), DAUNTLESS(<span class="string">"无畏派"</span>), CANDOR(<span class="string">"诚实派"</span>), ERUDITE(<span class="string">"博学派"</span>);</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String name;</div><div class="line"></div><div class="line">    Faction(String name) &#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Faction <span class="title">parse</span><span class="params">(String faction)</span> </span>&#123;</div><div class="line">        <span class="keyword">switch</span> (faction) &#123;</div><div class="line">            <span class="keyword">case</span> <span class="string">"无私派"</span>:</div><div class="line">                <span class="keyword">return</span> Faction.ABNEGATION;</div><div class="line">            <span class="keyword">case</span> <span class="string">"和平派"</span>:</div><div class="line">                <span class="keyword">return</span> Faction.AMITY;</div><div class="line">            <span class="keyword">case</span> <span class="string">"无畏派"</span>:</div><div class="line">                <span class="keyword">return</span> Faction.DAUNTLESS;</div><div class="line">            <span class="keyword">case</span> <span class="string">"诚实派"</span>:</div><div class="line">                <span class="keyword">return</span> Faction.CANDOR;</div><div class="line">            <span class="keyword">case</span> <span class="string">"博学派"</span>:</div><div class="line">                <span class="keyword">return</span> Faction.ERUDITE;</div><div class="line">            <span class="keyword">default</span>:</div><div class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"There is not enum names with ["</span> + faction + <span class="string">"] of type Faction exists! "</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Faction <span class="title">deserialize</span><span class="params">(String jsonEnum)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> Faction.parse(jsonEnum);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">serialize</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.getName();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>　　性别枚举<code>Gender</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">enum</span> Gender implements GsonEnum&lt;Gender&gt; &#123;</div><div class="line"></div><div class="line">    MALE(<span class="string">"男"</span>), FEMALE(<span class="string">"女"</span>);</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String type;</div><div class="line"></div><div class="line">    Gender(String type) &#123;</div><div class="line">        <span class="keyword">this</span>.type = type;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getType</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> type;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Gender <span class="title">parse</span><span class="params">(String type)</span> </span>&#123;</div><div class="line">        <span class="keyword">switch</span> (type) &#123;</div><div class="line">            <span class="keyword">case</span> <span class="string">"男"</span>:</div><div class="line">                <span class="keyword">return</span> Gender.MALE;</div><div class="line">            <span class="keyword">case</span> <span class="string">"女"</span>:</div><div class="line">                <span class="keyword">return</span> Gender.FEMALE;</div><div class="line">            <span class="keyword">default</span>:</div><div class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"There is not enum names with ["</span> + type + <span class="string">"] of type Gender exists! "</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Gender <span class="title">deserialize</span><span class="params">(String jsonEnum)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> Gender.parse(jsonEnum);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">serialize</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.getType();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>　　对于这两个枚举内部对<code>GsonEnum</code>接口的实现方法比较简单，所以这里就不解释了。</p>
+<p>　　第三步：自定义<code>Gson</code>（反）序列化过程的<code>GsonEnumTypeAdapter</code>，先看具体代码实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GsonEnumTypeAdapter</span>&lt;<span class="title">E</span>&gt; <span class="keyword">implements</span> <span class="title">JsonSerializer</span>&lt;<span class="title">E</span>&gt;, <span class="title">JsonDeserializer</span>&lt;<span class="title">E</span>&gt; </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> GsonEnum&lt;E&gt; gsonEnum;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">GsonEnumTypeAdapter</span><span class="params">(GsonEnum&lt;E&gt; gsonEnum)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.gsonEnum = gsonEnum;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> JsonElement <span class="title">serialize</span><span class="params">(E src, Type typeOfSrc, JsonSerializationContext context)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != src &amp;&amp; src <span class="keyword">instanceof</span> GsonEnum) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">new</span> JsonPrimitive(((GsonEnum) src).serialize());</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> E <span class="title">deserialize</span><span class="params">(JsonElement json, Type typeOfT, JsonDeserializationContext context)</span> <span class="keyword">throws</span> JsonParseException </span>&#123;</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != json) &#123;</div><div class="line">            <span class="keyword">return</span> gsonEnum.deserialize(json.getAsString());</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>　　代码看起来很简单，唯一的构造器要求传入一个<code>GsonEnum</code>的实现类。</p>
+<p>　　首先看一个<a href="http://lib.csdn.net/base/softwaretest" target="_blank" rel="external">测试</a>用例：</p>
+<p>　　（反）序列化测试时用到的类<code>Person</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line">    <span class="keyword">private</span> Gender gender;</div><div class="line">    <span class="keyword">private</span> Faction faction;</div><div class="line">    <span class="keyword">private</span> LocalDate birthday;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Person</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Person</span><span class="params">(String name, Gender gender, Faction faction, LocalDate birthday)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">        <span class="keyword">this</span>.gender = gender;</div><div class="line">        <span class="keyword">this</span>.faction = faction;</div><div class="line">        <span class="keyword">this</span>.birthday = birthday;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="string">"Person&#123;"</span> +</div><div class="line">                <span class="string">"name='"</span> + name + <span class="string">'\''</span> +</div><div class="line">                <span class="string">", gender="</span> + gender +</div><div class="line">                <span class="string">", faction="</span> + faction +</div><div class="line">                <span class="string">", birthday="</span> + birthday +</div><div class="line">                <span class="string">'&#125;'</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 省略 getter 和 setter</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="实现效果测试"><a href="#实现效果测试" class="headerlink" title="实现效果测试"></a>实现效果测试</h2><p>　　<code>JUnit</code>测试实例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testGson</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">    Gson gson = <span class="keyword">new</span> GsonBuilder()</div><div class="line">            .serializeNulls()</div><div class="line">            .registerTypeAdapter(LocalDate.class, <span class="keyword">new</span> LocalDateTypeAdapter())</div><div class="line">            .registerTypeAdapter(Gender.class, <span class="keyword">new</span> GsonEnumTypeAdapter&lt;&gt;(Gender.FEMALE))</div><div class="line">            .registerTypeAdapter(Faction.class, <span class="keyword">new</span> GsonEnumTypeAdapter&lt;&gt;(Faction.ABNEGATION))</div><div class="line">            .create();</div><div class="line"></div><div class="line">    Person p1 = <span class="keyword">new</span> Person(<span class="string">"雷卡"</span>, Gender.MALE, Faction.DAUNTLESS, LocalDate.of(<span class="number">1994</span>, <span class="number">10</span>, <span class="number">11</span>));</div><div class="line">    System.out.println(<span class="string">"调用 toString 方法：\n"</span> + p1);</div><div class="line">    String jsonText = gson.toJson(p1);</div><div class="line">    System.out.println(<span class="string">"将 person 转换成 json 字符串：\n"</span> + jsonText);</div><div class="line"></div><div class="line">    System.out.println(<span class="string">"-------------------"</span>);</div><div class="line"></div><div class="line">    Person p2 = gson.fromJson(jsonText, Person.class);</div><div class="line">    <span class="keyword">assert</span> p2 != p1;</div><div class="line">    System.out.println(<span class="string">"根据 json 字符串生成 person 实例：\n"</span> + p2);</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>　　测试结果为： </p>
+<p><img src="https://ooo.0o0.ooo/2016/08/23/57bc3b38b0830.jpg" alt="测试结果"></p>
+<h2 id="实现原理说明"><a href="#实现原理说明" class="headerlink" title="实现原理说明"></a>实现原理说明</h2><p>　　测试结果表明我们想要的效果已经达到了，现在讲一下<code>GsonEnumTypeAdapter</code>的实现原理。 </p>
+<p>　　以<code>Faction</code>为例，首先它接收<code>E</code>时我们传递的是<code>Faction</code>枚举的一个枚举值<code>Faction.ABNEGATION</code>，这个枚举值没有任何限定，可以是该枚举类中的任意一个。 </p>
+<p>　　序列化<code>Faction</code>类型时，<code>Gson</code>调用其中的<code>serialize</code>方法，注意此时我们传入的<code>Faction.ABNEGATION</code>并不发挥作用，我们直接调用的是序列化时遇到的<code>Faction</code>实例（比如<code>Faction.AMITY</code>，<code>Faction.CANDOR</code>）的<code>serialize</code>实例方法，那么此时返回的必然是该枚举实例的<code>name</code>属性值； </p>
+<p>　　反序列化遇到<code>Faction</code>类型时，<code>Gson</code>调用其中的<code>deserialize</code>方法，此时我们实际上操作的最开始传入的枚举类型<code>Faction.ABNEGATION</code>的<code>deserialize</code>方法，注意此时该方法需要传入一个字符串，刚好可以用到<code>JsonElement</code>自身提供的<code>getAsString</code>方法。再看<code>Faction</code>类中对<code>deserialize</code>方法的实现，实际上该方法并不关注调用者是谁，它真正关心的传入值是什么，根据传入的值，它可以很快获取得到对应的枚举或者抛出异常。</p>
+<p>　　可能上面表述得不是很清楚，但实际上都是一些基础的知识，即泛型，接口，枚举的特殊性的综合应用，多看几遍应该就懂了，另外最好打上几个断点，然后<code>debug</code>一遍，看整个流程是怎么跑的，那样基本就清晰了。 </p>
+<p>　　另外，为确保<code>GsonEnumTypeAdapter</code>只接收枚举并且<code>GsonEnum</code>只被枚举类所实现，可以添加泛型参数的边界，如下： </p>
+<p>　　<code>GsonEnum</code>的类声明</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">GsonEnum</span>&lt;<span class="title">E</span> <span class="keyword">extends</span> <span class="title">Enum</span>&lt;<span class="title">E</span>&gt;&gt;</span></div></pre></td></tr></table></figure>
+<p>　　<code>GsonEnumTypeAdapter</code>的类声明</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GsonEnumTypeAdapter</span>&lt;<span class="title">E</span> <span class="keyword">extends</span> <span class="title">Enum</span>&lt;<span class="title">E</span>&gt;&gt; <span class="keyword">implements</span> <span class="title">JsonSerializer</span>&lt;<span class="title">E</span>&gt;, <span class="title">JsonDeserializer</span>&lt;<span class="title">E</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>　　声明了泛型上限为<code>Enum</code>之后可以确保在使用该泛型时只有枚举类能够被处理。</p>
+<p>源码地址：<a href="https://github.com/Reka-Downey/java-miscellaneous" target="_blank" rel="external">GitHub</a> </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">编写日期：2016-08-23</td>
+</tr>
+<tr>
+<td style="text-align:right">发布日期：2017-05-22</td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div></div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="https://ooo.0o0.ooo/2017/05/26/59281c5c06940.png" alt="钟俊滨 WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="https://ooo.0o0.ooo/2017/05/26/59281c5c1b0b4.jpg" alt="钟俊滨 Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/Gson/" rel="tag"># Gson</a>
+          
+            <a href="/tags/Enum/" rel="tag"># Enum</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/23/shell-fundamental/" rel="prev" title="Linux Shell 常用命令集锦（1）">
+                Linux Shell 常用命令集锦（1） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://ooo.0o0.ooo/2017/05/22/5922c29806f81.jpg"
+               alt="钟俊滨" />
+          <p class="site-author-name" itemprop="name">钟俊滨</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Reka-Downey" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/RekaDowney" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                  Twitter
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.instagram.com/rekadowney/" target="_blank" title="Instagram">
+                  
+                    <i class="fa fa-fw fa-instagram"></i>
+                  
+                  Instagram
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#版本说明"><span class="nav-number">1.</span> <span class="nav-text">版本说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Gson-（反）序列化例子"><span class="nav-number">2.</span> <span class="nav-text">Gson （反）序列化例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#枚举（反）序列化通用实现"><span class="nav-number">3.</span> <span class="nav-text">枚举（反）序列化通用实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现效果测试"><span class="nav-number">4.</span> <span class="nav-text">实现效果测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现原理说明"><span class="nav-number">5.</span> <span class="nav-text">实现原理说明</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">钟俊滨</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://reka_downey.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://reka-downey.github.io/2017/05/22/gson-enum-serializer/';
+          this.page.identifier = '2017/05/22/gson-enum-serializer/';
+          this.page.title = 'Gson 优雅实现多个枚举的自定义（反）序列化过程';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://reka_downey.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.1"></script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
