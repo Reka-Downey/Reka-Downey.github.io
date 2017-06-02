@@ -97,7 +97,7 @@
 <meta property="og:url" content="https://reka-downey.github.io/2017/05/23/shell-fundamental/index.html">
 <meta property="og:site_name" content="钟俊滨的博客">
 <meta property="og:description" content="基础pwd：显示当前所在目录名称 cd：跳转目录 ls：显示文件列表 cat：查看文件内容">
-<meta property="og:updated_time" content="2017-05-27T05:39:23.176Z">
+<meta property="og:updated_time" content="2017-06-02T03:43:51.640Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Linux Shell 常用命令集锦（1）">
 <meta name="twitter:description" content="基础pwd：显示当前所在目录名称 cd：跳转目录 ls：显示文件列表 cat：查看文件内容">
@@ -415,7 +415,7 @@
 <p><code>cat</code>：查看文件内容</p>
 <a id="more"></a>
 <hr>
-<h2 id="关机"><a href="#关机" class="headerlink" title="关机"></a>关机</h2><p>立即关机命令：<del><code>init0</code></del>、<code>poweroff</code>、<code>half</code>、<code>shutdown -h now</code></p>
+<h2 id="关机"><a href="#关机" class="headerlink" title="关机"></a>关机</h2><p>立即关机命令：<del><code>init0</code></del>、<code>poweroff</code>、<code>halt</code>、<code>shutdown -h now</code></p>
 <p>定时关机命令：</p>
 <ul>
 <li><code>shutdown -h +30</code>：30分钟后关机</li>
@@ -433,9 +433,9 @@
 <hr>
 <h2 id="用户组管理"><a href="#用户组管理" class="headerlink" title="用户组管理"></a>用户组管理</h2><h3 id="添加用户组"><a href="#添加用户组" class="headerlink" title="添加用户组"></a>添加用户组</h3><p><code>groupadd ${option} ${groupName}</code></p>
 <h3 id="修改用户组"><a href="#修改用户组" class="headerlink" title="修改用户组"></a>修改用户组</h3><p><code>groupmod ${option} ${groupName}</code>，常用可选参数：<code>-n</code>指定新的组名称。</p>
-<h3 id="删除用户组"><a href="#删除用户组" class="headerlink" title="删除用户组"></a>删除用户组</h3><p><code>grouopdel ${option} ${accountName}</code></p>
+<h3 id="删除用户组"><a href="#删除用户组" class="headerlink" title="删除用户组"></a>删除用户组</h3><p><code>grouopdel ${option} ${groupName}</code></p>
 <h2 id="用户组统计"><a href="#用户组统计" class="headerlink" title="用户组统计"></a>用户组统计</h2><p><code>cat /etc/group | wc -l</code></p>
-<h3 id="用户组列表"><a href="#用户组列表" class="headerlink" title="用户组列表"></a>用户组列表</h3><p><code>cat /etc/group | cut -d : -f 1,3</code> 或者 <code>awk -F : &#39;{print $1&quot; - &quot;$3}&#39; /etc/group</code></p>
+<h3 id="用户组列表"><a href="#用户组列表" class="headerlink" title="用户组列表"></a>用户组列表</h3><p><code>cat /etc/group | cut -d : -f 1,3</code> 或者 <code>awk -F : &#39;{print $1&quot; - &quot;$3}&#39; /etc/group</code>，显示组ID和组名称</p>
 <hr>
 <h2 id="文件系统与磁盘"><a href="#文件系统与磁盘" class="headerlink" title="文件系统与磁盘"></a>文件系统与磁盘</h2><h3 id="查看某个（些）文件的空间占用"><a href="#查看某个（些）文件的空间占用" class="headerlink" title="查看某个（些）文件的空间占用"></a>查看某个（些）文件的空间占用</h3><p><code>du ${option} ${files}</code></p>
 <p>常用选项：</p>
@@ -859,7 +859,7 @@
   
 
     
-      <script id="dsq-count-scr" src="https://reka_downey.disqus.com/count.js" async></script>
+      <script id="dsq-count-scr" src="https://reka-downey.disqus.com/count.js" async></script>
     
 
     
@@ -870,7 +870,7 @@
           this.page.title = 'Linux Shell 常用命令集锦（1）';
         };
         var d = document, s = d.createElement('script');
-        s.src = 'https://reka_downey.disqus.com/embed.js';
+        s.src = 'https://reka-downey.disqus.com/embed.js';
         s.setAttribute('data-timestamp', '' + +new Date());
         (d.head || d.body).appendChild(s);
       </script>
